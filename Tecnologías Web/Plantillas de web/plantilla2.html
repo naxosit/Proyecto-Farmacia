@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Web Compleja</title>
+    <style>
+        /* Colores de fondo para diferentes secciones (sin CSS externo) */
+        body {
+            background-color: #f0f0f5; /* Color de fondo para toda la página */
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            background-color: #e6f2ff; /* Fondo para las secciones */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%; /* Asegura que la imagen no se desborde del contenedor */
+            height: auto;
+        }
+
+        .highlight {
+            background-color: #ffcccb; /* Un color resaltado para filas o celdas */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Página Web Compleja</h1>
+        <nav>
+            <ul style="list-style-type: none; padding: 0;">
+                <li style="display: inline; margin: 0 10px;"><a href="#tabla" style="color: white;">Tabla</a></li>
+                <li style="display: inline; margin: 0 10px;"><a href="#imagenes" style="color: white;">Imágenes</a></li>
+                <li style="display: inline; margin: 0 10px;"><a href="#informacion" style="color: white;">Información</a></li>
+                <li style="display: inline; margin: 0 10px;"><a href="#contacto" style="color: white;">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="tabla">
+            <h2>Tabla de Datos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">Manzanas</td>
+                        <td>10</td>
+                        <td>$2.00</td>
+                    </tr>
+                    <tr>
+                        <td>Naranjas</td>
+                        <td>8</td>
+                        <td>$3.00</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td>Peras</td>
+                        <td>5</td>
+                        <td>$2.50</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="imagenes">
+            <h2>Galería de Imágenes</h2>
+            <img src="https://via.placeholder.com/600x400" alt="Ejemplo de imagen 1">
+            <p>Descripción de la primera imagen.</p>
+            <img src="https://via.placeholder.com/600x400" alt="Ejemplo de imagen 2">
+            <p>Descripción de la segunda imagen.</p>
+        </section>
+
+        <section id="informacion">
+            <h2>Información Adicional</h2>
+            <p>Esta es una sección donde puedes añadir información adicional sobre tu proyecto, empresa, u otros detalles importantes.</p>
+            <ul>
+                <li>Punto de información 1</li>
+                <li>Punto de información 2</li>
+                <li>Punto de información 3</li>
+            </ul>
+        </section>
+
+        <section id="contacto">
+            <h2>Contacto</h2>
+            <form>
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" name="nombre"><br><br>
+                <label for="email">Correo Electrónico:</label><br>
+                <input type="email" id="email" name="email"><br><br>
+                <label for="mensaje">Mensaje:</label><br>
+                <textarea id="mensaje" name="mensaje" rows="4" cols="50"></textarea><br><br>
+                <input type="submit" value="Enviar">
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Mi Página Web Compleja. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

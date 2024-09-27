@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Web Avanzada</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .highlight {
+            color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Página Web Avanzada</h1>
+        <nav>
+            <ul>
+                <li><a href="#video">Video</a></li>
+                <li><a href="#audio">Audio</a></li>
+                <li><a href="#formulario">Formulario Avanzado</a></li>
+                <li><a href="#definiciones">Lista de Definiciones</a></li>
+                <li><a href="#alerta">Botones de Acción</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="video">
+            <h2>Video Incrustado</h2>
+            <video width="600" controls>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Tu navegador no soporta la etiqueta de video.
+            </video>
+        </section>
+
+        <section id="audio">
+            <h2>Audio Embebido</h2>
+            <audio controls>
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+                Tu navegador no soporta la etiqueta de audio.
+            </audio>
+        </section>
+
+        <section id="formulario">
+            <h2>Formulario Avanzado</h2>
+            <form>
+                <label for="pais">Elige tu país:</label>
+                <select id="pais" name="pais">
+                    <option value="mexico">México</option>
+                    <option value="espana">España</option>
+                    <option value="argentina">Argentina</option>
+                    <option value="colombia">Colombia</option>
+                </select><br><br>
+
+                <label for="newsletter">¿Deseas recibir nuestro boletín?</label><br>
+                <input type="radio" id="si" name="newsletter" value="si">
+                <label for="si">Sí</label><br>
+                <input type="radio" id="no" name="newsletter" value="no">
+                <label for="no">No</label><br><br>
+
+                <input type="submit" value="Enviar">
+            </form>
+        </section>
+
+        <section id="definiciones">
+            <h2>Lista de Definiciones</h2>
+            <dl>
+                <dt><span class="highlight">HTML</span></dt>
+                <dd>Lenguaje de marcado para crear páginas web.</dd>
+                <dt><span class="highlight">CSS</span></dt>
+                <dd>Lenguaje de estilo para personalizar la apariencia de las páginas web.</dd>
+                <dt><span class="highlight">JavaScript</span></dt>
+                <dd>Lenguaje de programación que permite añadir interactividad a las páginas web.</dd>
+            </dl>
+        </section>
+
+        <section id="alerta">
+            <h2>Botones de Acción</h2>
+            <button onclick="alert('¡Has hecho clic en el botón!')">Haz Clic Aquí</button>
+            <button onclick="document.body.style.backgroundColor = '#ffe6e6';">Cambiar Fondo</button>
+        </section>
+
+        <section id="enlaces">
+            <h2>Enlaces y Anclas</h2>
+            <p>Ir a la <a href="#v  ideo">sección de video</a>.</p>
+            <p>Visita <a href="https://www.google.com" target="_blank">Google</a> para más información.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Página Web Avanzada. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Web Definitiva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #cart-items {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Página Web Definitiva</h1>
+        <nav>
+            <ul>
+                <li><a href="#formulario">Formulario Avanzado</a></li>
+                <li><a href="#mapa">Mapa</a></li>
+                <li><a href="#carrito">Carrito de Compras</a></li>
+                <li><a href="#modal">Ventana Modal</a></li>
+                <li><a href="#datos-guardados">Datos Guardados</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="formulario">
+            <h2>Formulario con Validación</h2>
+            <form id="contact-form" onsubmit="saveData(); return false;">
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" name="nombre" required><br><br>
+                <label for="email">Correo Electrónico:</label><br>
+                <input type="email" id="email" name="email" required><br><br>
+                <input type="submit" value="Enviar">
+            </form>
+            <p id="form-message"></p>
+        </section>
+
+        <section id="mapa">
+            <h2>Mapa de Google Maps</h2>
+            <div id="map"></div>
+        </section>
+
+        <section id="carrito">
+            <h2>Carrito de Compras Dinámico</h2>
+            <button onclick="addItemToCart()">Añadir Producto</button>
+            <div id="cart-items">
+                <p>El carrito está vacío.</p>
+            </div>
+        </section>
+
+        <section id="modal">
+            <h2>Ventana Modal</h2>
+            <button id="openModal">Abrir Ventana Modal</button>
+
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>Esta es una ventana modal. Puedes añadir cualquier contenido aquí.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="datos-guardados">
+            <h2>Datos Guardados con LocalStorage</h2>
+            <button onclick="retrieveData()">Mostrar Datos Guardados</button>
+            <div id="saved-data"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Página Web Definitiva. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Validación y almacenamiento de datos del formulario
+        function saveData() {
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            localStorage.setItem('nombre', nombre);
+            localStorage.setItem('email', email);
+            document.getElementById('form-message').innerText = 'Datos guardados exitosamente.';
+        }
+
+        function retrieveData() {
+            const nombre = localStorage.getItem('nombre');
+            const email = localStorage.getItem('email');
+            const savedDataDiv = document.getElementById('saved-data');
+            savedDataDiv.innerHTML = `<p>Nombre: ${nombre || 'No hay datos'}</p><p>Email: ${email || 'No hay datos'}</p>`;
+        }
+
+        // Añadir elementos al carrito de compras
+        function addItemToCart() {
+            const cartItems = document.getElementById('cart-items');
+            const item = document.createElement('p');
+            item.textContent = 'Producto añadido al carrito';
+            cartItems.appendChild(item);
+        }
+
+        // Mapa de Google Maps
+        function initMap() {
+            const location = { lat: -34.397, lng: 150.644 };
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: location
+            });
+        }
+
+        // Ventana modal
+        const modal = document.getElementById("myModal");
+        const btn = document.getElementById("openModal");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
