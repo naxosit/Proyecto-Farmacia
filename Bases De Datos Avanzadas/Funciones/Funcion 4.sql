@@ -222,7 +222,7 @@ $$ LANGUAGE plpgsql;
 -- Función para eliminar un registro de la tabla EmpresaFarmaceutica
 
 CREATE OR REPLACE FUNCTION eliminar_empresa_farmaceutica(p_Codigo EmpresaFarmaceutica.Codigo%TYPE)
-RETURNS VOID ASS $$
+RETURNS VOID AS $$
 BEGIN
 	-- Eliminamos el registro
 	DELETE FROM EmpresaFarmaceutica
@@ -241,7 +241,7 @@ BEGIN
 	-- Retornamos el registro
 	RETURN QUERY
 	SELECT 
-		e.Codigo -- Codigo de la empresa farmacéutica
+		e.Codigo, -- Codigo de la empresa farmacéutica
 		e.Nombre -- Nombre de la empresa farmacéutica
 	FROM EmpresaFarmaceutica e
 	WHERE e.Codigo = p_Codigo; -- Condición para identificar el registro a seleccionar
@@ -327,7 +327,7 @@ CREATE OR REPLACE FUNCTION modificar_especialidad(
 	p_Codigo Especialidad.Codigo%TYPE, -- Código de la especialidad a modificar
 	p_Nombre Especialidad.Nombre%TYPE --Nuevo nombre que reemplazará al existente
 )
-RETURN VOID AS $$
+RETURNS VOID AS $$
 BEGIN
 	-- Actualizamos el registro de la tabla Especialidad
 	UPDATE Especialidad
@@ -338,7 +338,7 @@ $$ LANGUAGE plpgsql;
 
 -- Función para eliminar una especialidad (eliminación)
 
-CREATE OR REPLACE FUNCION eliminar_especialidad(p_Codigo Especialidad.Codigo%TYPE)
+CREATE OR REPLACE FUNCTION eliminar_especialidad(p_Codigo Especialidad.Codigo%TYPE)
 RETURNS VOID AS $$
 BEGIN 
 	-- Eliminamos el registro 
