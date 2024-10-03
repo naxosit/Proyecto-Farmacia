@@ -365,8 +365,135 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- RECETA MEDICA
 
+-- Función para insertar una receta médica (inserción)
 
+CREATE OR REPLACE FUNCTION insertar_receta_medica(
+	p_Codigo RecetaMedica.Codigo%TYPE, -- Código de la receta médica
+	p_TextoDescripcion RecetaMedica.TextoDescripcion%TYPE, -- Descripción de la receta médica
+	p_Fecha RecetaMedica.Fecha%TYPE -- Fecha de emisión de la receta médica
+)
+RETURNS VOID AS $$
+BEGIN
+	-- Insertamos un nuevo registro en la tabla RecetaMedica
+	INSERT INTO RecetaMedica(Codigo, TextoDescripcion, Fecha)
+	VALUES (p_Codigo, p_TextoDescripcion, p_Fecha);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para modificar una receta médica (modificación)
+
+CREATE OR REPLACE FUNCTION modificar_receta_medica(
+	p_Codigo RecetaMedica.Codigo%TYPE, -- Código de la receta médica a modificar
+	p_TextoDescripcion RecetaMedica.TextoDescripcion%TYPE, -- Nueva descripción de la receta
+	p_Fecha RecetaMedica.Fecha%TYPE -- Nueva fecha de la receta
+)
+RETURNS VOID AS $$
+BEGIN
+	-- Actualizamos el registro de la tabla RecetaMedica
+	UPDATE RecetaMedica
+	SET TextoDescripcion = p_TextoDescripcion, -- Se actualiza la descripción de la receta médica
+		Fecha = p_Fecha -- Se actualiza la fecha de emisión de la receta médica
+	WHERE Codigo = p_Codigo; -- Condición para identificar el registro a modificar
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para eliminar una receta médica (eliminación)
+
+CREATE OR REPLACE FUNCTION eliminar_receta_medica(p_Codigo RecetaMedica.Codigo%TYPE)
+RETURNS VOID AS $$
+BEGIN
+	-- Eliminamos el registro 
+	DELETE FROM RecetaMedica
+	WHERE Codigo = p_Codigo; -- Condición para identificar el registro a eliminar
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para seleccionar una receta médica (selección)
+
+CREATE OR REPLACE FUNCTION seleccionar_receta_medica(p_Codigo RecetaMedica.Codigo%TYPE)
+RETURNS TABLE (
+	Codigo RecetaMedica.Codigo%TYPE, -- Código de la receta médica
+	TextoDescripcion RecetaMedica.TextoDescripcion%TYPE, -- Descripción de la receta médica
+	Fecha RecetaMedica.Fecha%TYPE -- Fecha de emisión de la receta médica
+) AS $$
+BEGIN
+	-- Retornamos el registro que coincide con el código proporcionado
+	RETURN QUERY
+	SELECT 
+		r.Codigo, -- Código de la receta médica
+		r.TextoDescripcion, -- Descripción de la receta médica
+		r.Fecha -- Fecha de la receta médica
+	FROM RecetaMedica r
+	WHERE r.Codigo = p_Codigo; -- Condición para identificar el registro a seleccionar
+END;
+$$ LANGUAGE plpgsql;
+
+-- PREVISION
+
+-- Función para insertar una previsión (inserción)
+
+CREATE OR REPLACE FUNCTION insertar_prevision(
+	p_Codigo Prevision.Codigo%TYPE, -- Código de la previsión
+	p_Nombre Prevision.Nombre%TYPE, -- Nombre de la previsión
+	p_Tipo Prevision.Tipo%TYPE -- Tipo de previsión
+)
+RETURNS VOID AS $$
+BEGIN
+	-- Insertamos un nuevo registro en la tabla Prevision
+	INSERT INTO Prevision (Codigo, Nombre, Tipo)
+	VALUES (p_Codigo, p_Nombre, p_Tipo);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para modificar una previsión (modificación)
+
+CREATE OR REPLACE FUNCTION modificar_prevision (
+	p_codigo Prevision.Codigo%TYPE, -- Código de la previsión a modificar
+	p_nombre Prevision.Nombre%TYPE, -- Nuevo nombre de la previsión
+	p_Tipo Prevision.Tipo%TYPE -- Nuevo tipo de previsión
+)
+RETURNS VOID AS $$
+BEGIN
+	-- Actualizamos el registro de la tabla Prevision
+	UPDATE PREVISION
+	SET Nombre = p_nombre, --Se actualiza el nombre de la previsión
+		Tipo = p_Tipo -- Se actualiza el tipo de previsión
+	WHERE Codigo = p_Codigo -- Condición para identificar el registro a modificar
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para eliminar una previsión (eliminación)
+
+CREATE OR REPLACE FUNCTION eliminar_prevision(p_codigo Prevision.Codigo%TYPE)
+RETURNS VOID AS $$
+BEGIN
+	-- Eliminamos el registro 
+	DELETE FROM Prevision
+	WHERE Codigo = p_Codigo; -- Condición para identificar el registro a eliminar
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para seleccionar una previsión (selección)
+
+CREATE OR REPLACE FUNCTION sleccionar_prevision(p_Codigo Prevision.Codigo%TYPE)
+RETURNS TABLE (
+	Codigo Prevision.Codigo%TYPE, -- Código de la previsión
+	Nombre Prevision.Nombre%TYPE, -- Nombre de la previsión
+	Tipo Prevision.Tipo%TYPE -- Tipo de previsión
+) AS $$
+BEGIN
+	-- Retornamos el registro que coincide con el código proporcionado
+	RETURN QUERY
+	SELECT
+		p.Codigo, -- Código de la previsión
+		p.Nombre, -- Nombre de la previsión
+		p.Tipo -- Tipo de previsión
+	FROM Prevision p
+	WHERE p.Codigo = p_Codigo; -- Condición para identificar el registro a seleccionar
+END;
+$$ LANGUAGE plpgsql;
 
 
 
