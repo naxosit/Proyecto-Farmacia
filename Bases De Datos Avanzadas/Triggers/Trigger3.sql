@@ -1,15 +1,15 @@
 -- Crear la tabla Compras
 CREATE TABLE Compras (
-    ID SERIAL PRIMARY KEY,  -- Definir ID como columna de tipo SERIAL que actúa como clave primaria
-    CodigoFarmacia VARCHAR(10),  -- Columna para almacenar el código de la farmacia, hasta 10 caracteres
-    CodigoEmpresaFarmaceutica VARCHAR(10),  -- Columna para almacenar el código de la empresa farmacéutica, hasta 10 caracteres
-    Fecha DATE,  -- Columna para almacenar la fecha de la compra
-    Precio INTEGER  -- Columna para almacenar el precio de la compra
+    ID SERIAL PRIMARY KEY, 
+    CodigoFarmacia VARCHAR(10),  
+    CodigoEmpresaFarmaceutica VARCHAR(10),  
+    Fecha DATE,  
+    Precio INTEGER  
 );
 
 -- Crear o reemplazar la función aplicar_descuento
 CREATE OR REPLACE FUNCTION aplicar_descuento() 
-RETURNS TRIGGER AS $$  -- Indicar que esta función es un trigger y devolverá un nuevo registro
+RETURNS TRIGGER AS $$ 
 DECLARE
     compras_count INTEGER;  -- Variable para contar el número de compras
     descuento INTEGER;  -- Variable para almacenar el porcentaje de descuento
