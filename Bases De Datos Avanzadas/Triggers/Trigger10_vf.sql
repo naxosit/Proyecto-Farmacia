@@ -1,60 +1,58 @@
-create or replace function validar_rut() returns trigger as $$
-declare
-	strlen int;
-	i int := 1;
-	j int := 2;
-    suma numeric := 0;
-	temprut varchar(12);
-    verify_dv varchar(2);
-begin
-	strlen := length(new.rut::text);
+-- FUNCIÓN PARA VALIDAR EL RUT
+CREATE OR REPLACE FUNCTION VALIDAR_RUT() RETURNS TRIGGER AS $$
+DECLARE
+    STRLEN INT; -- LONGITUD DEL RUT
+    I INT := 1; -- CONTADOR PARA RECORRER CADA CARACTER
+    J INT := 2; -- PESO INICIAL PARA EL CÁLCULO DEL DV
+    SUMA NUMERIC := 0; -- VARIABLE PARA ALMACENAR LA SUMA DEL CÁLCULO
+    TEMPRUT VARCHAR(12); -- RUT INVERSO PARA CÁLCULO
+    VERIFY_DV VARCHAR(2); -- DÍGITO VERIFICADOR CALCULADO
+BEGIN
+    STRLEN := LENGTH(NEW.RUT::TEXT); -- OBTENER LA LONGITUD DEL RUT
 
-if strlen = 8 or strlen = 7 then
-        temprut := reverse(new.rut::text);
+    IF STRLEN = 8 OR STRLEN = 7 THEN -- VERIFICAR LONGITUD VÁLIDA
+        TEMPRUT := REVERSE(NEW.RUT::TEXT); -- INVERTIR EL RUT
 
-	while i <= strlen loop
-            	suma := suma + (cast(substring(temprut, i, 1) as integer) * j); 
-            	i := i + 1;
-            
-            	if j = 7 then
-                	j := 2;
-            	else
-                	j := j + 1;
-            	end if;
-        end loop;
+        WHILE I <= STRLEN LOOP -- RECORRER CADA CARACTER DEL RUT
+            SUMA := SUMA + (CAST(SUBSTRING(TEMPRUT, I, 1) AS INTEGER) * J); 
+            I := I + 1;
 
-	verify_dv := 11 - (suma % 11);
-        
-        -- Ajustar el dígito verificador calculado
-        if verify_dv = '11' then
-            verify_dv := '0';
-        elsif verify_dv = '10' then
-            verify_dv := 'k';
-        else
-            verify_dv := verify_dv::varchar;
-        end if;
+            IF J = 7 THEN
+                J := 2; -- REINICIAR PESO A 2
+            ELSE
+                J := J + 1; -- INCREMENTAR PESO
+            END IF;
+        END LOOP;
 
--- Comparar el DV calculado con el DV proporcionado
-        if lower(new.DigitoVerificador) = verify_dv then
-           return new;
-        else
-            raise exception 'Digito verificador no valido';
-        end if;
-    end if;
+        VERIFY_DV := 11 - (SUMA % 11); -- CÁLCULO DEL DÍGITO VERIFICADOR
 
-    -- Retornar 0 si la longitud del RUT no es válida
-    raise exception 'Rut ingresado no valido';
-end;
-$$ language plpgsql;
+        -- AJUSTAR EL DÍGITO VERIFICADOR CALCULADO
+        IF VERIFY_DV = '11' THEN
+            VERIFY_DV := '0'; -- SI ES 11, SE CONVIERTE A 0
+        ELSIF VERIFY_DV = '10' THEN
+            VERIFY_DV := 'K'; -- SI ES 10, SE CONVIERTE A K
+        ELSE
+            VERIFY_DV := VERIFY_DV::VARCHAR; -- CONVERTIR A VARCHAR
+        END IF;
 
-create or replace trigger tg_ValidarRutMedico before insert on medicos for
-each row execute function validar_rut();
+        -- COMPARAR EL DV CALCULADO CON EL DV PROPORCIONADO
+        IF LOWER(NEW.DIGITOVERIFICADOR) = VERIFY_DV THEN
+            RETURN NEW; -- DEVOLVER EL REGISTRO SI SON IGUALES
+        ELSE
+            RAISE EXCEPTION 'DÍGITO VERIFICADOR NO VÁLIDO'; -- ERROR EN CASO DE DISCREPANCIAS
+        END IF;
+    END IF;
 
+    -- RETORNAR EXCEPCIÓN SI LA LONGITUD DEL RUT NO ES VÁLIDA
+    RAISE EXCEPTION 'RUT INGRESADO NO VÁLIDO';
+END;
+$$ LANGUAGE PLPGSQL;
 
-create or replace trigger tg_ValidarRutPaciente before insert on Paciente for
-each row execute function validar_rut();
+-- TRIGGER PARA VALIDAR RUT EN MEDICOS
+CREATE OR REPLACE TRIGGER TG_VALIDARRUTMEDICO BEFORE INSERT ON MEDICOS FOR EACH ROW EXECUTE FUNCTION VALIDAR_RUT();
 
+-- TRIGGER PARA VALIDAR RUT EN PACIENTE
+CREATE OR REPLACE TRIGGER TG_VALIDARRUTPACIENTE BEFORE INSERT ON PACIENTE FOR EACH ROW EXECUTE FUNCTION VALIDAR_RUT();
 
-
-create or replace trigger tg_ValidarRutSupervisor before insert on Supervisor for
-each row execute function validar_rut();
+-- TRIGGER PARA VALIDAR RUT EN SUPERVISOR
+CREATE OR REPLACE TRIGGER TG_VALIDARRUTSUPERVISOR BEFORE INSERT ON SUPERVISOR FOR EACH ROW EXECUTE FUNCTION VALIDAR_RUT();
