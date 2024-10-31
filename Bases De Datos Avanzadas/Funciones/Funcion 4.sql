@@ -929,11 +929,12 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT RutMedico, FechaInicio, FechaFin
-    FROM Paciente
-    WHERE Rut = p_RutPaciente;
+    SELECT p.RutMedico, p.FechaInicio, p.FechaFin
+    FROM Paciente p
+    WHERE p.Rut = p_RutPaciente;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 
