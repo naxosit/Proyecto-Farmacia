@@ -460,7 +460,7 @@ BEGIN
 	UPDATE PREVISION
 	SET Nombre = p_nombre, --Se actualiza el nombre de la previsión
 		Tipo = p_Tipo -- Se actualiza el tipo de previsión
-	WHERE Codigo = p_Codigo -- Condición para identificar el registro a modificar
+	WHERE Codigo = p_Codigo; -- Condición para identificar el registro a modificar
 END;
 $$ LANGUAGE plpgsql;
 
@@ -477,7 +477,7 @@ $$ LANGUAGE plpgsql;
 
 -- Función para seleccionar una previsión (selección)
 
-CREATE OR REPLACE FUNCTION sleccionar_prevision(p_Codigo Prevision.Codigo%TYPE)
+CREATE OR REPLACE FUNCTION seleccionar_prevision(p_Codigo Prevision.Codigo%TYPE)
 RETURNS TABLE (
 	Codigo Prevision.Codigo%TYPE, -- Código de la previsión
 	Nombre Prevision.Nombre%TYPE, -- Nombre de la previsión
@@ -637,13 +637,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION insertar_medicamento(
     p_NombreComercial Medicamento.NombreComercial%TYPE,  -- Nombre comercial del medicamento
-    p_Formula Medicamento.Formula%TYPE                   -- Fórmula del medicamento
+    p_Formula Medicamento.Formula%TYPE,                   -- Fórmula del medicamento
+	p_Stock Medicamento.Stock%TYPE
 )
 RETURNS VOID AS $$
 BEGIN
     -- Insertamos un nuevo medicamento en la tabla Medicamento
-    INSERT INTO Medicamento (NombreComercial, Formula)
-    VALUES (p_NombreComercial, p_Formula);
+    INSERT INTO Medicamento (NombreComercial, Formula, Stock)
+    VALUES (p_NombreComercial, p_Formula, p_Stock);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -651,25 +652,31 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION modificar_medicamento(
     p_NombreComercial Medicamento.NombreComercial%TYPE,  -- Nombre comercial del medicamento a modificar
-    p_Formula Medicamento.Formula%TYPE                   -- Nueva fórmula del medicamento
+    p_Formula Medicamento.Formula%TYPE,                  -- Nueva fórmula del medicamento
+    p_Stock Medicamento.Stock%TYPE                       -- Nueva cantidad de stock
 )
 RETURNS VOID AS $$
 BEGIN
     -- Actualizamos el registro que coincide con el nombre comercial proporcionado
     UPDATE Medicamento
-    SET Formula = p_Formula  -- Se actualiza la fórmula del medicamento
+    SET Formula = p_Formula,         -- Se actualiza la fórmula del medicamento
+        Stock = p_Stock              -- Se actualiza la cantidad de stock disponible
     WHERE NombreComercial = p_NombreComercial;  -- Condición para identificar el medicamento
 END;
 $$ LANGUAGE plpgsql;
 
+
 -- Función para eliminar un medicamento (eliminación)
 
-CREATE OR REPLACE FUNCTION eliminar_medicamento(p_NombreComercial Medicamento.NombreComercial%TYPE)
+CREATE OR REPLACE FUNCTION eliminar_medicamento(
+    p_NombreComercial Medicamento.NombreComercial%TYPE  -- Nombre comercial del medicamento a eliminar
+)
 RETURNS VOID AS $$
 BEGIN
-    -- Eliminamos el medicamento que coincide con el nombre comercial proporcionado
+    -- Eliminamos el medicamento solo si el stock es igual a cero
     DELETE FROM Medicamento
-    WHERE NombreComercial = p_NombreComercial;  -- Condición para identificar el medicamento a eliminar
+    WHERE NombreComercial = p_NombreComercial  -- Condición para identificar el medicamento a eliminar
+      AND Stock = 0;  -- Condición adicional para asegurarse de que el stock sea cero
 END;
 $$ LANGUAGE plpgsql;
 
@@ -678,18 +685,21 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION seleccionar_medicamento(p_NombreComercial Medicamento.NombreComercial%TYPE)
 RETURNS TABLE (
     NombreComercial Medicamento.NombreComercial%TYPE,  -- Nombre comercial del medicamento
-    Formula Medicamento.Formula%TYPE                  -- Fórmula del medicamento
+    Formula Medicamento.Formula%TYPE,                  -- Fórmula del medicamento
+	Stock Medicamento.Stock%TYPE
 ) AS $$
 BEGIN
     -- Retornamos el registro que coincide con el nombre comercial proporcionado
     RETURN QUERY
     SELECT
         m.NombreComercial,  -- Nombre comercial del medicamento
-        m.Formula           -- Fórmula del medicamento
-    FROM Medicamento m
+        m.Formula,           -- Fórmula del medicamento
+  		m.Stock  
+	FROM Medicamento m
     WHERE m.NombreComercial = p_NombreComercial;  -- Condición para seleccionar el medicamento
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- SUPERVISOR
 
@@ -783,43 +793,46 @@ $$ LANGUAGE plpgsql;
 
 -- VENDE
 
--- Función para insertar un registro en "Vende" (inserción)
+-- INSERCIÓN
 
 CREATE OR REPLACE FUNCTION insertar_vende(
     p_NombreComercialMedicamento Vende.NombreComercialMedicamento%TYPE, -- Nombre comercial del medicamento
     p_CodigoFarmacia Vende.CodigoFarmacia%TYPE,                         -- Código de la farmacia que vende el medicamento
-    p_Precio Vende.Precio%TYPE                                          -- Precio del medicamento
+    p_Precio Vende.Precio%TYPE,                                         -- Precio del medicamento
+    p_Cantidad Vende.Cantidad%TYPE                                      -- Cantidad del medicamento
 )
 RETURNS VOID AS $$
 BEGIN
     -- Insertamos un nuevo registro en la tabla Vende
-    INSERT INTO Vende (NombreComercialMedicamento, CodigoFarmacia, Precio)
-    VALUES (p_NombreComercialMedicamento, p_CodigoFarmacia, p_Precio);
+    INSERT INTO Vende (NombreComercialMedicamento, CodigoFarmacia, Precio, Cantidad)
+    VALUES (p_NombreComercialMedicamento, p_CodigoFarmacia, p_Precio, p_Cantidad);
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para modificar un registro en "Vende" (modificación)
+-- MODIFICACIÓN
 
 CREATE OR REPLACE FUNCTION modificar_vende(
     p_NombreComercialMedicamento Vende.NombreComercialMedicamento%TYPE, -- Nombre comercial del medicamento
     p_CodigoFarmacia Vende.CodigoFarmacia%TYPE,                         -- Código de la farmacia que vende el medicamento
-    p_Precio Vende.Precio%TYPE                                          -- Nuevo precio del medicamento
+    p_Precio Vende.Precio%TYPE,                                         -- Nuevo precio del medicamento
+    p_Cantidad Vende.Cantidad%TYPE                                      -- Nueva cantidad del medicamento
 )
 RETURNS VOID AS $$
 BEGIN
     -- Actualizamos el registro en la tabla Vende
     UPDATE Vende
-    SET Precio = p_Precio                 -- Se actualiza el precio del medicamento
+    SET Precio = p_Precio,                -- Se actualiza el precio del medicamento
+        Cantidad = p_Cantidad             -- Se actualiza la cantidad del medicamento
     WHERE NombreComercialMedicamento = p_NombreComercialMedicamento  -- Condición para identificar el medicamento
       AND CodigoFarmacia = p_CodigoFarmacia; -- Condición para identificar la farmacia
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para eliminar un registro en "Vende" (eliminación)
+-- ELIMINACIÓN
 
 CREATE OR REPLACE FUNCTION eliminar_vende(
     p_NombreComercialMedicamento Vende.NombreComercialMedicamento%TYPE, -- Nombre comercial del medicamento
-    p_CodigoFarmacia Vende.CodigoFarmacia%TYPE                         -- Código de la farmacia que vende el medicamento
+    p_CodigoFarmacia Vende.CodigoFarmacia%TYPE                          -- Código de la farmacia que vende el medicamento
 )
 RETURNS VOID AS $$
 BEGIN
@@ -830,16 +843,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Función para seleccionar un registro en "Vende" (selección)
+-- SELECCIÓN
 
 CREATE OR REPLACE FUNCTION seleccionar_vende(
     p_NombreComercialMedicamento Vende.NombreComercialMedicamento%TYPE, -- Nombre comercial del medicamento
-    p_CodigoFarmacia Vende.CodigoFarmacia%TYPE                         -- Código de la farmacia que vende el medicamento
+    p_CodigoFarmacia Vende.CodigoFarmacia%TYPE                          -- Código de la farmacia que vende el medicamento
 )
 RETURNS TABLE (
     NombreComercialMedicamento Vende.NombreComercialMedicamento%TYPE,  -- Nombre comercial del medicamento
     CodigoFarmacia Vende.CodigoFarmacia%TYPE,                          -- Código de la farmacia
-    Precio Vende.Precio%TYPE                                           -- Precio del medicamento
+    Precio Vende.Precio%TYPE,                                          -- Precio del medicamento
+    Cantidad Vende.Cantidad%TYPE                                       -- Cantidad del medicamento
 ) AS $$
 BEGIN
     -- Retornamos el registro que coincide con el nombre comercial y la farmacia
@@ -847,7 +861,8 @@ BEGIN
     SELECT
         v.NombreComercialMedicamento, -- Nombre comercial del medicamento
         v.CodigoFarmacia,             -- Código de la farmacia
-        v.Precio                      -- Precio del medicamento
+        v.Precio,                     -- Precio del medicamento
+        v.Cantidad                    -- Cantidad del medicamento
     FROM Vende v
     WHERE v.NombreComercialMedicamento = p_NombreComercialMedicamento  -- Condición para seleccionar el medicamento
       AND v.CodigoFarmacia = p_CodigoFarmacia; -- Condición para seleccionar la farmacia
@@ -855,7 +870,72 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- MEDICO DE CABECERA ¿?
+-- MEDICO DE CABECERA 
+
+--  Estas funciones trabajarán sobre el campo que referencia al médico asociado al paciente
+
+-- INSERCIÓN 
+CREATE OR REPLACE FUNCTION insertar_medico_cabecera(
+    p_RutPaciente Paciente.Rut%TYPE,
+    p_RutMedico Paciente.RutMedico%TYPE,
+    p_FechaInicio Paciente.FechaInicio%TYPE,
+    p_FechaFin Paciente.FechaFin%TYPE
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE Paciente
+    SET RutMedico = p_RutMedico,
+        FechaInicio = p_FechaInicio,
+        FechaFin = p_FechaFin
+    WHERE Rut = p_RutPaciente;
+END;
+$$ LANGUAGE plpgsql;
+
+-- MODIFICACIÓN
+CREATE OR REPLACE FUNCTION modificar_medico_cabecera(
+    p_RutPaciente Paciente.Rut%TYPE,
+    p_RutMedico Paciente.RutMedico%TYPE,
+    p_FechaInicio Paciente.FechaInicio%TYPE,
+    p_FechaFin Paciente.FechaFin%TYPE
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE Paciente
+    SET RutMedico = p_RutMedico,
+        FechaInicio = p_FechaInicio,
+        FechaFin = p_FechaFin
+    WHERE Rut = p_RutPaciente;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ELIMINACIÓN
+CREATE OR REPLACE FUNCTION eliminar_medico_cabecera(p_RutPaciente Paciente.Rut%TYPE)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE Paciente
+    SET RutMedico = NULL,
+        FechaInicio = NULL,
+        FechaFin = NULL
+    WHERE Rut = p_RutPaciente;
+END;
+$$ LANGUAGE plpgsql;
+
+-- SELECCIÓN
+CREATE OR REPLACE FUNCTION seleccionar_medico_cabecera(p_RutPaciente Paciente.Rut%TYPE)
+RETURNS TABLE (
+    RutMedico Paciente.RutMedico%TYPE,
+    FechaInicio Paciente.FechaInicio%TYPE,
+    FechaFin Paciente.FechaFin%TYPE
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT RutMedico, FechaInicio, FechaFin
+    FROM Paciente
+    WHERE Rut = p_RutPaciente;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 -- TRES MODIFICACIONES ELEGIDAS GRUPALMENTE
 
